@@ -1,36 +1,132 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Hotel Inventory — Proyecto #14 (UNEG)
 
-## Getting Started
+Aplicación web para el **control del inventario de insumos en el sector hotelero y de hospedaje** (lencería, minibar, artículos de limpieza y demás insumos de operación). Proyecto académico de **Ingeniería de Software I** — UNEG (Prof. Ing. Dubraska Roca).
 
-First, run the development server:
+> **Problemática resuelta:** fugas y desperdicio en la reposición de insumos. La aplicación digitaliza el inventario, genera alertas de stock, detecta patrones de fuga con IA y automatiza reportes por correo.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Stack tecnológico
+
+| Capa | Tecnología |
+|------|------------|
+| Frontend | Next.js 16 · TypeScript · Tailwind CSS |
+| Backend | Server Actions Next.js + Supabase (Node.js) |
+| Base de datos | PostgreSQL (Supabase) con RLS |
+| IA | Google Gemini (modelos Flash) + registro de tokens |
+| Automatización | n8n (webhook → proceso → IA → email/PDF) |
+| Deploy | Vercel · Supabase · n8n Cloud/Docker |
+| Control de versiones | GitHub + GitHub Actions (CI/CD) |
+
+## Arquitectura
+
+```mermaid
+flowchart LR
+  UI["UI Next.js + Tailwind"] --> App["App Router (Server Components)"]
+  App --> Proxy["Proxy (sesión JWT)"]
+  App --> Actions["Server Actions"]
+  Actions --> PG["PostgreSQL (Supabase + RLS)"]
+  Actions --> RPC["apply_movement (transaccional)"]
+  Actions --> Gemini["Google Gemini"]
+  Actions --> N8N["n8n webhook"]
+  N8N --> Email["Email / Reporte"]
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ver el diagrama E-R y de casos de uso en el [informe técnico](../informe_tecnico.md) y en `supabase/schema.sql`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Estructura del proyecto
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+hotel-inventory/
+├── src/
+│   ├── app/                 # Rutas del App Router
+│   │   ├── (app)/           # Layout protegido + páginas
+│   │   │   ├── dashboard/   # KPIs y alertas
+│   │   │   ├── items/       # Catálogo de insumos
+│   │   │   ├── inventory/   # Movimientos y stock
+│   │   │   ├── minibar/     # Consumos por habitación
+│   │   │   ├── linen/       # Ciclo de lencería
+│   │   │   ├── alerts/      # Alertas de stock
+│   │   │   └── ia/          # IA (Gemini) + automatización
+│   │   └── login/           # Inicio de sesión
+│   ├── components/          # Sidebar, formularios, kits UI
+│   └── lib/
+│       ├── actions/         # Server Actions (auth, inventory, ai, automation)
+│       ├── supabase/        # Clientes server/browser + proxy de sesión
+│       ├── gemini.ts        # Integración Gemini + registro de tokens
+│       └── types.ts         # Tipos del dominio
+├── supabase/
+│   ├── schema.sql           # Esquema completo (tablas, RLS, RPC, vistas)
+│   └── seed.sql             # Datos de demostración
+├── n8n/
+│   └── hotel-inventory-workflow.json  # Flujo de automatización
+├── .github/workflows/ci.yml
+├── Dockerfile · docker-compose.yml
+└── .env.example
+```
 
-## Learn More
+## Configuración (Setup)
 
-To learn more about Next.js, take a look at the following resources:
+**Requisitos previos:** Node.js ≥ 20, cuenta en Supabase, key de Google AI Studio (Gemini), cuenta Vercel y proyecto n8n.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# 1. Instalar dependencias
+npm install
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# 2. Configurar variables de entorno
+cp .env.example .env.local
+#   Completa NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY,
+#   GEMINI_API_KEY, GEMINI_MODEL y N8N_WEBHOOK_URL
 
-## Deploy on Vercel
+# 3. Levantar en desarrollo
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Base de datos (documentada en `supabase/`)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Crea un proyecto en [Supabase](https://supabase.com).
+2. Ejecuta `supabase/schema.sql` en el **SQL Editor**.
+3. Ejecuta `supabase/seed.sql` para cargar datos de demostración.
+4. Crea los usuarios en **Authentication → Users** (o con el sign-up de la app) y asigna su rol insertando en `profiles`.
+
+> El schema incluye: tipos enumerados, 12 tablas, **seguridad RLS por rol**, función transaccional `apply_movement`, vistas `v_stock_actual` y `v_mermas`, y generación automática de alertas.
+
+## Automatización con n8n
+
+1. Importa `n8n/hotel-inventory-workflow.json` en tu instancia de n8n (Cloud o local con `docker compose up -d n8n`).
+2. Configura las credenciales **SMTP** en los nodos de email.
+3. Define la variable `GEMINI_API_KEY` en n8n.
+4. Activa el workflow y copia la URL del webhook en `N8N_WEBHOOK_URL` de la app.
+
+**Flujo:** Webhook (trigger) → Code (procesamiento) → Gemini (IA) → IF (validación) → Email con reporte y análisis / Email de caso vacío.
+
+## Uso de IA y registro de tokens
+
+- `src/lib/gemini.ts` expone `geminiComplete()` y `logAiUsage()`.
+- Cada llamada guarda `prompt_tokens`, `completion_tokens`, `total_tokens` y costo estimado en la tabla **`ai_usage_log`** (visible en "IA y Reportes").
+- Funciones: reposición sugerida y detección de fugas/desperdicio.
+
+## Scripts
+
+| Comando | Descripción |
+|---------|-------------|
+| `npm run dev` | Servidor de desarrollo |
+| `npm run build` | Build de producción |
+| `npm run start` | Servidor de producción |
+| `npm run lint` | Análisis estático (ESLint) |
+| `npm run test` | Pruebas |
+
+## Despliegue en Vercel
+
+1. Conecta el repositorio de GitHub en [Vercel](https://vercel.com).
+2. Añade las variables de entorno del `.env.example`.
+3. Cada `push` a `main` dispara el pipeline de **GitHub Actions** (lint → build → imagen Docker) y el deploy de Vercel.
+
+### Docker
+
+```bash
+docker build -t hotel-inventory .
+docker compose up -d app n8n
+```
+
+## Créditos
+
+Proyecto #14 — Ingeniería de Software I · UNEG · Informe técnico completo en `../informe_tecnico.md`.

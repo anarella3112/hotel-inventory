@@ -1,0 +1,35 @@
+version: "3.8"
+
+# Entorno local de la aplicación. Para levantar n8n local sin cuenta en la nube:
+#   docker compose up -d app n8n
+services:
+  app:
+    build: .
+    container_name: hotel-inventory
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local
+    environment:
+      NODE_ENV: production
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n-local
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - N8N_SECURE_COOKIE=false
+      - GENERIC_TIMEZONE=America/Caracas
+      - WEBHOOK_URL=http://localhost:5678/
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  n8n_data:
