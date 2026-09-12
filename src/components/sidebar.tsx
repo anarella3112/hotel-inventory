@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { logout } from "@/lib/actions/auth";
 import type { AppRole } from "@/lib/types";
 import { ROLE_LABELS, ROLE_COLORS } from "@/lib/types";
+import { BrandLogo } from "@/components/brand-logo";
 
 const NAV = [
   { href: "/dashboard", label: "Panel", icon: "▦" },
@@ -28,17 +29,10 @@ export function Sidebar({
   const pathname = usePathname();
 
   return (
-    <aside className="flex w-60 flex-col border-r border-zinc-200 bg-white">
-      <div className="flex items-center gap-2 px-5 py-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 font-bold text-white">
-          H
-        </div>
-        <div>
-          <p className="text-sm font-bold leading-tight text-zinc-900">
-            Hotel Inventory
-          </p>
-          <p className="text-[11px] text-zinc-400">Proyecto #14 · UNEG</p>
-        </div>
+    <aside className="flex w-64 flex-col border-r border-[#e5e7eb] bg-white">
+      <div className="border-b border-[#e5e7eb] px-5 py-5">
+        <BrandLogo compact />
+        <p className="mt-2 pl-1 text-[10px] font-medium tracking-[0.12em] text-[#0B2D5B]/55">MÁS CONTROL · MENOS FUGAS</p>
       </div>
 
       <nav className="flex-1 space-y-1 px-3">
@@ -50,8 +44,8 @@ export function Sidebar({
               href={item.href}
               className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
                 active
-                  ? "bg-sky-50 text-sky-700"
-                  : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
+                   ? "bg-[#eaf2ff] text-[#0B2D5B] shadow-sm"
+                   : "text-zinc-600 hover:bg-[#f5f8fc] hover:text-[#0B2D5B]"
               }`}
             >
               <span className="w-4 text-center">{item.icon}</span>
@@ -61,7 +55,7 @@ export function Sidebar({
         })}
       </nav>
 
-      <div className="border-t border-zinc-200 p-4">
+      <div className="border-t border-[#e5e7eb] p-4">
         <div className="mb-3 flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-200 text-sm font-semibold text-zinc-600">
             {(fullName ?? userEmail ?? "U").charAt(0).toUpperCase()}

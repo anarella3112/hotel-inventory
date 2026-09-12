@@ -1,13 +1,14 @@
 import { GoogleGenAI, type GenerateContentResponse } from "@google/genai";
 import { createClient as createSupabaseServer } from "@/lib/supabase/server";
 
-export const DEFAULT_MODEL = "gemini-2.5-flash";
+export const DEFAULT_MODEL = "gemini-3.6-flash";
 
 /**
  * Precios referenciales de Gemini 2.5 Flash (USD por millón de tokens).
  * Ajustar según el modelo usado. Solo con fines de estimación de costos.
  */
 const PRICING = {
+  "gemini-3.6-flash": { input: 0.3, output: 2.5 },
   "gemini-2.5-flash": { input: 0.3, output: 2.5 },
   "gemini-2.0-flash": { input: 0.1, output: 0.4 },
   "gemini-2.0-flash-lite": { input: 0.075, output: 0.3 },

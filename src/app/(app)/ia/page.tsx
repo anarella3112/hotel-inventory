@@ -43,7 +43,7 @@ export default async function IaPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold text-zinc-900">IA y Reportes</h1>
         <span className="rounded-full bg-violet-50 px-3 py-1 text-sm font-semibold text-violet-700">
-          Gemini · {usageLog?.[0]?.model ?? "gemini-2.5-flash"}
+          Gemini · {usageLog?.[0]?.model ?? "gemini-3.6-flash"}
         </span>
       </div>
 

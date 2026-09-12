@@ -18,7 +18,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// ===== 1. Procesamiento de la información =====\n// Recibe el payload enviado por la app y lo transforma en un resumen legible.\n\nconst data = $input.item.json.data || {};\nconst stock = (data.stock_bajo || []).map((s) =>\n  `- ${s.insumo} en ${s.ubicacion}: ${s.cantidad} uds (mínimo ${s.minimo})`\n);\nconst mermas = (data.mermas || []).map((m) =>\n  `- ${m.insumo}: ${m.cantidad} uds (${m.motivo})`\n);\nconst minibar = (data.minibar_pendiente || []).length;\n\nconst resumen = data.resumen || {};\n\nconst textoPlano = [\n  `Reporte de operación — ${data.generated_at || new Date().toISOString()}`,\n  `Ítems con stock bajo/crítico: ${resumen.items_stock_bajo ?? stock.length}`,\n  `Mermas registradas: ${resumen.mermas_ultimas ?? mermas.length}`,\n  `Consumos de minibar pendientes de cobro: ${minibar}`,\n  '',\n  '=== STOCK BAJO / CRÍTICO ===',\n  stock.length ? stock.join('\\n') : 'Sin incidencias de stock.',\n  '',\n  '=== MERMAS ===',\n  mermas.length ? mermas.join('\\n') : 'Sin mermas registradas.',\n].join('\\n');\n\nreturn [{ json: { ...$input.item.json, resumen_plano: textoPlano } }];"
+        "jsCode": "// ===== 1. Procesamiento de la información =====\n// El webhook de n8n entrega el payload bajo \"body\" (headers, query, body).\nconst input = $input.item.json || {};\nconst payload = input.body && typeof input.body === 'object' ? input.body : input;\nconst data = payload.data || {};\nconst stock = (data.stock_bajo || []).map((s) =>\n  `- ${s.insumo} en ${s.ubicacion}: ${s.cantidad} uds (mínimo ${s.minimo})`\n);\nconst mermas = (data.mermas || []).map((m) =>\n  `- ${m.insumo}: ${m.cantidad} uds (${m.motivo})`\n);\nconst minibar = (data.minibar_pendiente || []).length;\n\nconst resumen = data.resumen || {};\n\nconst textoPlano = [\n  `Reporte de operación — ${data.generated_at || new Date().toISOString()}`,\n  `Ítems con stock bajo/crítico: ${resumen.items_stock_bajo ?? stock.length}`,\n  `Mermas registradas: ${resumen.mermas_ultimas ?? mermas.length}`,\n  `Consumos de minibar pendientes de cobro: ${minibar}`,\n  '',\n  '=== STOCK BAJO / CRÍTICO ===',\n  stock.length ? stock.join('\\n') : 'Sin incidencias de stock.',\n  '',\n  '=== MERMAS ===',\n  mermas.length ? mermas.join('\\n') : 'Sin mermas registradas.',\n].join('\\n');\n\nreturn [{ json: { ...$input.item.json, resumen_plano: textoPlano } }];"
       },
       "id": "code-process",
       "name": "1. Procesar información",
@@ -28,26 +28,45 @@
     },
     {
       "parameters": {
+        "jsCode": "// ===== 2. Preparar la llamada a Gemini =====\n// Construye el prompt y serializa el body de la API (sin depender de fetch).\n\nconst prompt = 'Eres un analista hotelero. Resume el siguiente reporte de inventario y destaca los 3 riesgos más urgentes de fuga o desperdicio. Sé concreto:\\n\\n' + ($input.item.json.resumen_plano || '');\n\nconst body = JSON.stringify({\n  contents: [{ parts: [{ text: prompt }] }],\n  generationConfig: { temperature: 0.2 },\n});\n\nreturn [{ json: { prompt, body } }];"
+      },
+      "id": "code-prep-gemini",
+      "name": "2. Preparar llamada IA",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [560, 0]
+    },
+    {
+      "parameters": {
         "method": "POST",
-        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=REPLACE_WITH_GEMINI_API_KEY",
         "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"contents\": [\n    { \"parts\": [ { \"text\": \"Eres un analista hotelero. Resumen el siguiente reporte de inventario y destaca los 3 riesgos más urgentes de fuga o desperdicio. Sé concreto:\\n\\n\" + $json.resumen_plano } ] }\n  ],\n  \"generationConfig\": { \"temperature\": 0.2 }\n}",
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "key",
-              "value": "={{ $env.GEMINI_API_KEY }}"
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.body }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
             }
-          ]
-        },
-        "options": {}
+          }
+        }
       },
       "id": "http-gemini",
-      "name": "2. IA Gemini",
+      "name": "2b. HTTP: Llamar a Gemini",
       "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [560, 0]
+      "typeVersion": 4.5,
+      "position": [840, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== 2c. Normalizar la respuesta de Gemini =====\nconst raw = $input.item.json;\n\nlet data = raw;\nif (typeof raw === 'string') {\n  try {\n    data = JSON.parse(raw);\n  } catch (e) {\n    data = { error: 'No se pudo interpretar la respuesta: ' + String(raw).slice(0, 200) };\n  }\n}\nif (data && typeof data === 'object' && !data.candidates && data.error) {\n  data = { error: String(data.error).slice(0, 400) };\n}\nif (data && typeof data === 'object') {\n  data.resumen_plano = $input.item.json.resumen_plano || '';\n}\n\nreturn [{ json: data }];"
+      },
+      "id": "code-parse-gemini",
+      "name": "2c. Analizar respuesta IA",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, -160]
     },
     {
       "parameters": {
@@ -68,33 +87,33 @@
       "name": "3. ¿La IA respondió?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
-      "position": [840, 0]
+      "position": [1400, 0]
     },
     {
       "parameters": {
-        "fromEmail": "n8n@hotelparadise.com",
-        "toEmail": "gerencia@hotelparadise.com",
-        "subject": "={['Alerta hotelera - Reporte diario ', new Date().toLocaleDateString('es-VE')].join('')}",
+        "fromEmail": "anarellamendez@gmail.com",
+        "toEmail": "anarellamendez@gmail.com",
+        "subject": "={{ 'Alerta hotelera - Reporte diario ' + new Date().toLocaleDateString('es-VE') }}",
         "emailFormat": "html",
-        "html": "=<h2>Reporte de operación del hotel</h2><pre style=\"font-family:monospace;font-size:13px;white-space:pre-wrap\">" + $json.resumen_plano + "</pre><h3>Análisis de IA (Gemini)</h3><p>" + $json.candidates[0].content.parts[0].text + "</p>",
+        "html": "={{ '<h2>Reporte de operación del hotel</h2><pre style=\"font-family:monospace;font-size:13px;white-space:pre-wrap\">' + ($json.resumen_plano || '') + '</pre><h3>Análisis de IA (Gemini)</h3><p>' + ($json.candidates && $json.candidates[0] && $json.candidates[0].content && $json.candidates[0].content.parts && $json.candidates[0].content.parts[0] ? $json.candidates[0].content.parts[0].text : '') + '</p>' }}",
         "options": {}
       },
       "id": "email-ok",
       "name": "Salida: Email con reporte + análisis IA",
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
-      "position": [1120, -140],
+      "position": [1680, -140],
       "credentials": {
         "smtp": {
-          "id": "smtp-cred",
-          "name": "SMTP_ACCOUNT"
+          "id": "cOS3jh0xtln8osF5",
+          "name": "SMTP account"
         }
       }
     },
     {
       "parameters": {
-        "fromEmail": "n8n@hotelparadise.com",
-        "toEmail": "gerencia@hotelparadise.com",
+        "fromEmail": "anarellamendez@gmail.com",
+        "toEmail": "anarellamendez@gmail.com",
         "subject": "Reporte diario: sin datos suficientes",
         "emailFormat": "text",
         "text": "El reporte llegó sin datos suficientes (caso vacío). Revisar la conexión entre la aplicación y n8n.",
@@ -104,76 +123,70 @@
       "name": "Salida: Email caso vacío",
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
-      "position": [1120, 180],
+      "position": [1680, 180],
       "credentials": {
         "smtp": {
-          "id": "smtp-cred",
-          "name": "SMTP_ACCOUNT"
+          "id": "cOS3jh0xtln8osF5",
+          "name": "SMTP account"
         }
       }
     },
     {
       "parameters": {
-        "content": "AUTOMATIZACIÓN: Reporte de operación\n\n1. TRIGGER: webhook POST /hotel-inventory (disparado por la app o por el cron \"Schedule Trigger\" si lo agregas).\n2. PROCESAMIENTO: el nodo Code normaliza stock bajo, mermas y minibar pendiente en texto plano.\n3. IA: Gemini (gemini-2.5-flash) genera el resumen y riesgos; usa la api key del entorno (GEMINI_API_KEY).\n4. SALIDA: correo HTML a gerencia. Si la IA no responde, se envía un correo de caso vacío.\n\nCONFIGURACIÓN SMTP: crea una credencial SMTP en n8n y asígnala a los nodos Email.",
-        "height": 240,
-        "width": 340
+        "content": "AUTOMATIZACIÓN: Reporte de operación\n\n1. TRIGGER: webhook POST /hotel-inventory (disparado por la app o por el cron \"Schedule Trigger\" si lo agregas).\n2. PROCESAMIENTO: el nodo Code normaliza stock bajo, mermas y minibar pendiente en texto plano.\n3. IA: Gemini (gemini-3.6-flash) genera el resumen y riesgos; se llama con el nodo HTTP nativo (body raw), sin fetch.\n4. SALIDA: correo HTML a gerencia. Si la IA no responde, se envía un correo de caso vacío.\n\nCONFIGURACIÓN SMTP: credencial \"SMTP account\" asignada a los nodos Email.",
+        "height": 100,
+        "width": 620
       },
       "id": "sticky-doc",
       "name": "Documentación del flujo",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
-      "position": [280, 320]
+      "position": [40, 340]
     }
   ],
   "connections": {
     "Trigger: Webhook (Reporte Diario)": {
       "main": [
         [
-          {
-            "node": "1. Procesar información",
-            "type": "main",
-            "index": 0
-          }
+          { "node": "1. Procesar información", "type": "main", "index": 0 }
         ]
       ]
     },
     "1. Procesar información": {
       "main": [
         [
-          {
-            "node": "2. IA Gemini",
-            "type": "main",
-            "index": 0
-          }
+          { "node": "2. Preparar llamada IA", "type": "main", "index": 0 }
         ]
       ]
     },
-    "2. IA Gemini": {
+    "2. Preparar llamada IA": {
       "main": [
         [
-          {
-            "node": "3. ¿La IA respondió?",
-            "type": "main",
-            "index": 0
-          }
+          { "node": "2b. HTTP: Llamar a Gemini", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "2b. HTTP: Llamar a Gemini": {
+      "main": [
+        [
+          { "node": "2c. Analizar respuesta IA", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "2c. Analizar respuesta IA": {
+      "main": [
+        [
+          { "node": "3. ¿La IA respondió?", "type": "main", "index": 0 }
         ]
       ]
     },
     "3. ¿La IA respondió?": {
       "main": [
         [
-          {
-            "node": "Salida: Email con reporte + análisis IA",
-            "type": "main",
-            "index": 0
-          }
+          { "node": "Salida: Email con reporte + análisis IA", "type": "main", "index": 0 }
         ],
         [
-          {
-            "node": "Salida: Email caso vacío",
-            "type": "main",
-            "index": 0
-          }
+          { "node": "Salida: Email caso vacío", "type": "main", "index": 0 }
         ]
       ]
     }

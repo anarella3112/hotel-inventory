@@ -35,7 +35,7 @@ export default async function AppLayout({
         role={role}
       />
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar title="Hotel Inventory" />
+        <TopBar title="Control de inventario inteligente" />
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </div>
     </div>
