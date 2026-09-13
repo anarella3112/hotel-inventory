@@ -27,6 +27,12 @@ export async function login(
   });
 
   if (error) {
+    console.error("Supabase login failed", {
+      email,
+      message: error.message,
+      code: error.code,
+      status: error.status,
+    });
     return { error: "Credenciales inválidas. Verifica e intenta de nuevo." };
   }
 
