@@ -64,6 +64,7 @@ create table public.items (
   subcategory text,
   unit text not null,                    -- ej. unidad, mt2, litro, pack
   cost numeric(12,2) not null default 0, -- costo unitario referencial
+  sale_price numeric(12,2) not null default 0, -- precio de venta para minibar
   provider text,
   stock_min int not null default 0,
   stock_max int not null default 0,

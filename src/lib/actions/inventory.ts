@@ -144,9 +144,13 @@ export async function registerMinibarConsumo(
   const room_id = String(formData.get("room_id") ?? "");
   const item_id = String(formData.get("item_id") ?? "");
   const quantity = Number(formData.get("quantity") ?? 0);
-  const price = Number(formData.get("price") ?? 0);
+  const { data: item, error: itemError } = await supabase
+    .from("items")
+    .select("sale_price")
+    .eq("id", item_id)
+    .single();
 
-  if (!room_id || !item_id || quantity <= 0 || price <= 0) {
+  if (!room_id || !item_id || quantity <= 0 || itemError || Number(item?.sale_price) <= 0) {
     return { error: "Completa los datos del consumo." };
   }
 
@@ -154,7 +158,7 @@ export async function registerMinibarConsumo(
     room_id,
     item_id,
     quantity,
-    price,
+    price: item.sale_price,
     facturado: false,
   });
 

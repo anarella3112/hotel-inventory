@@ -9,7 +9,7 @@ export default async function MinibarPage() {
       supabase.from("rooms").select("id, number").eq("active", true).order("number"),
       supabase
         .from("items")
-        .select("id, name")
+         .select("id, name, sale_price")
         .eq("active", true)
         .in("category", ["minibar", "alimentos_bebidas"])
         .order("name"),

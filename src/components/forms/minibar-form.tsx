@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import {
   registerMinibarConsumo,
   type ActionState,
@@ -15,12 +15,14 @@ export function MinibarForm({
   items,
 }: {
   rooms: Pick<Room, "id" | "number">[];
-  items: Pick<Item, "id" | "name">[];
+  items: Pick<Item, "id" | "name" | "sale_price">[];
 }) {
   const [state, formAction, pending] = useActionState(
     registerMinibarConsumo,
     initialState,
   );
+  const [selectedItem, setSelectedItem] = useState("");
+  const selectedPrice = items.find((item) => item.id === selectedItem)?.sale_price ?? 0;
 
   return (
     <form
@@ -51,6 +53,8 @@ export function MinibarForm({
         <select
           name="item_id"
           required
+          value={selectedItem}
+          onChange={(event) => setSelectedItem(event.target.value)}
           className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
         >
           <option value="">— Seleccionar —</option>
@@ -74,17 +78,18 @@ export function MinibarForm({
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-zinc-600">
-          Precio de venta (Bs) *
-        </label>
-        <input
-          name="price"
-          type="number"
-          min="0"
-          step="0.01"
-          required
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
-        />
+          <label className="mb-1 block text-xs font-medium text-zinc-600">
+            Precio definido (Bs)
+          </label>
+          <input
+            name="price_display"
+            type="number"
+            value={Number(selectedPrice).toFixed(2)}
+            readOnly
+            aria-describedby="minibar-price-help"
+            className="w-full cursor-not-allowed rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-600 outline-none"
+          />
+          <p id="minibar-price-help" className="mt-1 text-[11px] text-zinc-400">El precio se toma del catálogo y no se puede modificar aquí.</p>
       </div>
       <div className="flex items-end md:col-span-2 xl:col-span-4">
         <button

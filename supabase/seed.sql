@@ -54,6 +54,17 @@ insert into public.items (name, sku, category, unit, cost, provider, stock_min, 
 -- Papel higiénico es un amenity de habitación, no un químico de limpieza.
 update public.items set category = 'amenities' where sku = 'LIM-PAP-01';
 
+update public.items set sale_price = case sku
+  when 'MIN-REF-01' then 3.00
+  when 'MIN-AGU-01' then 2.50
+  when 'MIN-JUG-01' then 3.50
+  when 'MIN-BOT-01' then 4.00
+  when 'MIN-GAL-01' then 3.00
+  when 'MIN-CHO-01' then 4.50
+  else sale_price
+end
+where category = 'minibar';
+
 -- ---------- DOTACIÓN ESTÁNDAR POR TIPO DE HABITACIÓN ----------
 insert into public.room_dots (room_type, item_id, quantity) values
   ('standard', (select id from public.items where sku = 'LEN-TOA-01'), 2),

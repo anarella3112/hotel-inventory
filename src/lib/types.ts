@@ -35,6 +35,7 @@ export interface Item {
   subcategory: InsumoSubcategoria | null;
   unit: string;
   cost: number;
+  sale_price: number;
   provider: string | null;
   stock_min: number;
   stock_max: number;
