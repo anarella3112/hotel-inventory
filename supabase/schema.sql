@@ -229,7 +229,7 @@ begin
   select
     case when s.quantity = 0 then 'stock_critico' else 'stock_bajo' end,
     p_item_id, p_location_id,
-    case when s.quantity = 0 then 'critica' else 'baja' end,
+     (case when s.quantity = 0 then 'critica' else 'baja' end)::public.alerta_nivel,
     'Stock de "' || i.name || '" en ' || l.name || ': ' || s.quantity ||
     ' (mínimo: ' || i.stock_min || ')'
   from public.stock s
