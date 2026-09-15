@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { MinibarForm } from "@/components/forms/minibar-form";
+import { MinibarPaymentForm } from "@/components/forms/minibar-payment-form";
 
 export default async function MinibarPage() {
   const supabase = await createClient();
@@ -60,7 +61,7 @@ export default async function MinibarPage() {
               <th className="px-4 py-3 font-semibold">Producto</th>
               <th className="px-4 py-3 font-semibold">Cant.</th>
               <th className="px-4 py-3 font-semibold">Importe</th>
-              <th className="px-4 py-3 font-semibold">Facturado</th>
+              <th className="px-4 py-3 font-semibold">Estado / cobro</th>
               <th className="px-4 py-3 font-semibold">Fecha</th>
             </tr>
           </thead>
@@ -81,13 +82,9 @@ export default async function MinibarPage() {
                   </td>
                   <td className="px-4 py-2.5">
                     {c.facturado ? (
-                      <span className="rounded-md bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-800">
-                        Cobrado
-                      </span>
+                      <div className="space-y-1"><span className="rounded-md bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-800">Cobrado</span><p className="text-[11px] text-zinc-500">{c.payment_method ?? "Método no registrado"} · {c.paid_at ? new Date(c.paid_at).toLocaleDateString("es-VE") : "Fecha no registrada"}</p></div>
                     ) : (
-                      <span className="rounded-md bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">
-                        Pendiente
-                      </span>
+                      <div className="space-y-1"><span className="rounded-md bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">Pendiente</span><MinibarPaymentForm id={c.id} /></div>
                     )}
                   </td>
                   <td className="px-4 py-2.5 text-zinc-500">

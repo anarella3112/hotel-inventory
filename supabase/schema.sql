@@ -118,6 +118,8 @@ create table public.minibar_consumos (
   quantity int not null,
   price numeric(12,2) not null,          -- precio de venta
   facturado boolean not null default false,
+  paid_at timestamptz,
+  payment_method text,
   checkout_at timestamptz,
   user_id uuid references auth.users(id),
   created_at timestamptz not null default now()
@@ -294,6 +296,11 @@ create policy "escritura_movimientos" on public.movements for insert to authenti
 );
 create policy "escritura_consumos" on public.minibar_consumos for insert to authenticated with check (
   exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin','gerencia','gobernanta','piso','frontdesk'))
+);
+create policy "actualiza_cobros_minibar" on public.minibar_consumos for update to authenticated using (
+  exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin','gerencia','frontdesk'))
+) with check (
+  exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin','gerencia','frontdesk'))
 );
 create policy "escritura_lenceria" on public.linen_cycle for insert to authenticated with check (
   exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin','gerencia','gobernanta','piso'))

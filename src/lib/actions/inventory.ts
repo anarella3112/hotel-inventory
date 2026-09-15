@@ -171,6 +171,33 @@ export async function registerMinibarConsumo(
   return { success: "Consumo de minibar registrado (pendiente de facturación)." };
 }
 
+export async function markMinibarPaid(
+  prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const supabase = await createClient();
+  const id = String(formData.get("id") ?? "");
+  const payment_method = String(formData.get("payment_method") ?? "").trim();
+
+  if (!id || !payment_method) {
+    return { error: "Selecciona un método de pago." };
+  }
+
+  const { error } = await supabase
+    .from("minibar_consumos")
+    .update({ facturado: true, paid_at: new Date().toISOString(), payment_method })
+    .eq("id", id)
+    .eq("facturado", false);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/minibar");
+  revalidatePath("/dashboard");
+  return { success: "Consumo marcado como cobrado." };
+}
+
 // ---------- Lencería ----------
 
 export async function registerLinenMerma(
