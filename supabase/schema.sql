@@ -61,6 +61,7 @@ create table public.items (
   name text not null,
   sku text not null unique,
   category insumo_categoria not null,
+  subcategory text,
   unit text not null,                    -- ej. unidad, mt2, litro, pack
   cost numeric(12,2) not null default 0, -- costo unitario referencial
   provider text,

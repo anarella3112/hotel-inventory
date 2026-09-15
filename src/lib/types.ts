@@ -5,6 +5,8 @@ export type InsumoCategoria =
   | "amenities"
   | "alimentos_bebidas";
 
+export type InsumoSubcategoria = string;
+
 export type UbicacionTipo = "almacen" | "lavanderia" | "piso" | "habitacion";
 
 export type MovimientoTipo =
@@ -30,6 +32,7 @@ export interface Item {
   name: string;
   sku: string;
   category: InsumoCategoria;
+  subcategory: InsumoSubcategoria | null;
   unit: string;
   cost: number;
   provider: string | null;
@@ -101,6 +104,14 @@ export const CATEGORY_LABELS: Record<InsumoCategoria, string> = {
   limpieza: "Limpieza",
   amenities: "Amenities",
   alimentos_bebidas: "Alimentos y Bebidas",
+};
+
+export const SUBCATEGORY_LABELS: Record<InsumoCategoria, string[]> = {
+  minibar: ["Bebidas", "Snacks"],
+  lenceria: ["Toallas", "Sábanas", "Fundas y almohadas", "Protectores"],
+  limpieza: ["Químicos", "Consumibles", "Accesorios"],
+  amenities: ["Higiene personal", "Artículos de habitación"],
+  alimentos_bebidas: ["Alimentos", "Bebidas"],
 };
 
 export const TYPE_LABELS: Record<MovimientoTipo, string> = {

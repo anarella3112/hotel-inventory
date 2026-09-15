@@ -1,9 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { createItem, type ActionState } from "@/lib/actions/inventory";
 import { FormResult } from "@/components/form-result";
-import { CATEGORY_LABELS, type InsumoCategoria } from "@/lib/types";
+import { CATEGORY_LABELS, SUBCATEGORY_LABELS, type InsumoCategoria } from "@/lib/types";
 
 const initialState: ActionState = {};
 
@@ -11,6 +11,7 @@ const CATEGORIES = Object.keys(CATEGORY_LABELS) as InsumoCategoria[];
 
 export function NewItemForm() {
   const [state, formAction, pending] = useActionState(createItem, initialState);
+  const [category, setCategory] = useState<InsumoCategoria>("minibar");
 
   return (
     <form
@@ -46,11 +47,29 @@ export function NewItemForm() {
         <select
           name="category"
           required
+          value={category}
+          onChange={(event) => setCategory(event.target.value as InsumoCategoria)}
           className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
         >
           {CATEGORIES.map((c) => (
             <option key={c} value={c}>
               {CATEGORY_LABELS[c]}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label className="mb-1 block text-xs font-medium text-zinc-600">
+          Subcategoría *
+        </label>
+        <select
+          name="subcategory"
+          required
+          className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
+        >
+          {SUBCATEGORY_LABELS[category].map((subcategory) => (
+            <option key={subcategory} value={subcategory}>
+              {subcategory}
             </option>
           ))}
         </select>

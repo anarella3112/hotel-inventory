@@ -29,13 +29,14 @@ export async function createItem(
   const name = String(formData.get("name") ?? "").trim();
   const sku = String(formData.get("sku") ?? "").trim();
   const category = String(formData.get("category") ?? "") as InsumoCategoria;
+  const subcategory = String(formData.get("subcategory") ?? "").trim() || null;
   const unit = String(formData.get("unit") ?? "").trim();
   const cost = Number(formData.get("cost") ?? 0);
   const provider = String(formData.get("provider") ?? "").trim() || null;
   const stock_min = Number(formData.get("stock_min") ?? 0);
   const stock_max = Number(formData.get("stock_max") ?? 0);
 
-  if (!name || !sku || !unit) {
+  if (!name || !sku || !unit || !subcategory) {
     return { error: "Nombre, SKU y unidad son obligatorios." };
   }
   if (!CATEGORIES.includes(category)) {
@@ -46,6 +47,7 @@ export async function createItem(
     name,
     sku,
     category,
+    subcategory,
     unit,
     cost,
     provider,
