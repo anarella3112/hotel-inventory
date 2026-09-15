@@ -9,7 +9,9 @@ insert into public.locations (name, type, parent_id) values
   ('Lavandería / Ropería', 'lavanderia', null),
   ('Piso 1', 'piso', null),
   ('Piso 2', 'piso', null),
-  ('Piso 3', 'piso', null);
+  ('Piso 3', 'piso', null),
+  ('Recepción', 'habitacion', null),
+  ('Área de Limpieza', 'almacen', null);
 
 -- ---------- HABITACIONES ----------
 insert into public.rooms (number, room_type, floor, location_id) values
@@ -36,7 +38,21 @@ insert into public.items (name, sku, category, unit, cost, provider, stock_min, 
   ('Detergente en polvo 5kg', 'LIM-DET-01', 'limpieza', 'litro', 6.00, 'Químicos Caroní', 6, 40),
   ('Cloro 1L', 'LIM-CLO-01', 'limpieza', 'litro', 1.50, 'Químicos Caroní', 12, 60),
   ('Papel higiénico x30', 'LIM-PAP-01', 'limpieza', 'pack', 7.50, 'Suministros Hotel', 10, 50),
-  ('Desinfectante pisos 3L', 'LIM-DES-01', 'limpieza', 'litro', 4.00, 'Químicos Caroní', 8, 40);
+  ('Desinfectante pisos 3L', 'LIM-DES-01', 'limpieza', 'litro', 4.00, 'Químicos Caroní', 8, 40),
+  ('Toalla de manos', 'LEN-MAN-01', 'lenceria', 'unidad', 4.50, 'Textil del Oriente', 30, 120),
+  ('Protector de colchón', 'LEN-PRO-01', 'lenceria', 'unidad', 18.00, 'Textil del Oriente', 10, 50),
+  ('Almohada estándar', 'LEN-ALM-01', 'lenceria', 'unidad', 10.00, 'Textil del Oriente', 10, 50),
+  ('Galletas individuales', 'MIN-GAL-01', 'minibar', 'unidad', 1.10, 'Distribuidora Norte', 24, 120),
+  ('Chocolate individual', 'MIN-CHO-01', 'minibar', 'unidad', 1.50, 'Distribuidora Norte', 24, 120),
+  ('Acondicionador 30ml', 'AME-ACO-01', 'amenities', 'unidad', 0.60, 'Suministros Hotel', 60, 400),
+  ('Gorro de baño', 'AME-GOR-01', 'amenities', 'unidad', 0.35, 'Suministros Hotel', 60, 300),
+  ('Kit dental', 'AME-KIT-01', 'amenities', 'unidad', 0.75, 'Suministros Hotel', 60, 300),
+  ('Desengrasante 1L', 'LIM-DESG-01', 'limpieza', 'litro', 2.80, 'Químicos Caroní', 8, 40),
+  ('Limpiavidrios 1L', 'LIM-VID-01', 'limpieza', 'litro', 2.20, 'Químicos Caroní', 8, 40),
+  ('Bolsas para basura x20', 'LIM-BOL-01', 'limpieza', 'pack', 3.50, 'Suministros Hotel', 10, 60);
+
+-- Papel higiénico es un amenity de habitación, no un químico de limpieza.
+update public.items set category = 'amenities' where sku = 'LIM-PAP-01';
 
 -- ---------- DOTACIÓN ESTÁNDAR POR TIPO DE HABITACIÓN ----------
 insert into public.room_dots (room_type, item_id, quantity) values
