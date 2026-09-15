@@ -9,6 +9,9 @@ export default async function ItemsPage() {
     .from("items")
     .select("*")
     .order("name");
+  const providers = Array.from(
+    new Set((items ?? []).map((item) => item.provider).filter(Boolean)),
+  ).sort();
 
   return (
     <div className="space-y-6">
@@ -20,7 +23,7 @@ export default async function ItemsPage() {
         <h2 className="mb-2 text-sm font-semibold text-zinc-500">
           Registrar nuevo insumo
         </h2>
-        <NewItemForm />
+        <NewItemForm providers={providers as string[]} />
       </section>
 
       <ItemsCatalog items={items ?? []} />

@@ -32,7 +32,9 @@ export async function createItem(
   const subcategory = String(formData.get("subcategory") ?? "").trim() || null;
   const unit = String(formData.get("unit") ?? "").trim();
   const cost = Number(formData.get("cost") ?? 0);
-  const provider = String(formData.get("provider") ?? "").trim() || null;
+  const selectedProvider = String(formData.get("provider") ?? "").trim();
+  const newProvider = String(formData.get("new_provider") ?? "").trim();
+  const provider = (selectedProvider === "__new__" ? newProvider : selectedProvider) || null;
   const stock_min = Number(formData.get("stock_min") ?? 0);
   const stock_max = Number(formData.get("stock_max") ?? 0);
 
