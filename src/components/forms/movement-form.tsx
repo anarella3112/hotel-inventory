@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { registerMovement, type ActionState } from "@/lib/actions/inventory";
 import { FormResult } from "@/components/form-result";
 import type { Item, Location, MovimientoTipo } from "@/lib/types";
@@ -19,14 +19,20 @@ const TYPES: MovimientoTipo[] = [
 export function MovementForm({
   items,
   locations,
+  stock,
 }: {
-  items: Pick<Item, "id" | "name">[];
+  items: Pick<Item, "id" | "name" | "stock_min" | "stock_max">[];
   locations: Pick<Location, "id" | "name">[];
+  stock: { item_id: string; location_id: string; quantity: number; stock_min: number; stock_max: number }[];
 }) {
   const [state, formAction, pending] = useActionState(
     registerMovement,
     initialState,
   );
+  const [itemId, setItemId] = useState("");
+  const [locationId, setLocationId] = useState("");
+  const selectedStock = stock.find((row) => row.item_id === itemId && row.location_id === locationId);
+  const selectedItem = items.find((item) => item.id === itemId);
 
   return (
     <form
@@ -40,6 +46,8 @@ export function MovementForm({
         <select
           name="item_id"
           required
+          value={itemId}
+          onChange={(event) => setItemId(event.target.value)}
           className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
         >
           <option value="">— Seleccionar —</option>
@@ -57,6 +65,8 @@ export function MovementForm({
         <select
           name="location_id"
           required
+          value={locationId}
+          onChange={(event) => setLocationId(event.target.value)}
           className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
         >
           <option value="">— Seleccionar —</option>
@@ -67,6 +77,12 @@ export function MovementForm({
           ))}
         </select>
       </div>
+      {itemId && locationId && (
+        <div className="rounded-lg border border-[#cfe0fb] bg-[#f4f8ff] px-3 py-2 text-xs text-[#0B2D5B] md:col-span-2 xl:col-span-3">
+          <strong>{selectedItem?.name}</strong>: stock actual <strong>{selectedStock?.quantity ?? 0}</strong> · mínimo <strong>{selectedStock?.stock_min ?? selectedItem?.stock_min ?? 0}</strong> · máximo <strong>{selectedStock?.stock_max ?? selectedItem?.stock_max ?? 0}</strong>.
+          <span className="ml-1 text-[#0B2D5B]/70">El mínimo activa la alerta y el máximo es la meta de reposición.</span>
+        </div>
+      )}
       <div>
         <label className="mb-1 block text-xs font-medium text-zinc-600">
           Tipo de movimiento *

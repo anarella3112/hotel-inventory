@@ -15,7 +15,7 @@ export default async function InventoryPage() {
     await Promise.all([
       supabase.from("v_stock_actual").select("*").order("name"),
       supabase.from("locations").select("id, name").eq("active", true).order("name"),
-      supabase.from("items").select("id, name").eq("active", true).order("name"),
+        supabase.from("items").select("id, name, stock_min, stock_max").eq("active", true).order("name"),
       supabase
         .from("movements")
         .select("id, type, quantity, motivo, reference, created_at")
@@ -40,7 +40,7 @@ export default async function InventoryPage() {
         <h2 className="mb-2 text-sm font-semibold text-zinc-500">
           Registrar movimiento (entrada, salida, merma…)
         </h2>
-        <MovementForm items={items ?? []} locations={locations ?? []} />
+        <MovementForm items={items ?? []} locations={locations ?? []} stock={stock ?? []} />
       </section>
 
       <section className="overflow-hidden rounded-2xl border border-zinc-200 bg-white">

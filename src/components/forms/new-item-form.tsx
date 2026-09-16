@@ -145,6 +145,7 @@ export function NewItemForm({ providers }: { providers: string[] }) {
           defaultValue={0}
           className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
         />
+        <p className="mt-1 text-[11px] text-zinc-400">Límite que activa una alerta de reposición.</p>
       </div>
       <div>
         <label className="mb-1 block text-xs font-medium text-zinc-600">
@@ -158,6 +159,7 @@ export function NewItemForm({ providers }: { providers: string[] }) {
           defaultValue={0}
           className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
         />
+        <p className="mt-1 text-[11px] text-zinc-400">Cantidad objetivo después de reponer.</p>
       </div>
       <div className="flex items-end">
         <button
