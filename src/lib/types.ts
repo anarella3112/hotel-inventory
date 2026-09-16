@@ -115,6 +115,14 @@ export const SUBCATEGORY_LABELS: Record<InsumoCategoria, string[]> = {
   alimentos_bebidas: ["Alimentos", "Bebidas"],
 };
 
+export const UNIT_OPTIONS: Record<InsumoCategoria, string[]> = {
+  minibar: ["unidad", "pack"],
+  lenceria: ["unidad"],
+  limpieza: ["litro", "kilogramo", "unidad", "pack"],
+  amenities: ["unidad", "pack"],
+  alimentos_bebidas: ["unidad", "pack", "litro"],
+};
+
 export const TYPE_LABELS: Record<MovimientoTipo, string> = {
   entrada: "Entrada",
   salida: "Salida",
