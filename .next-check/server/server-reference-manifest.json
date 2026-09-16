@@ -1,0 +1,187 @@
+{
+  "node": {
+    "00999e1cc5228a7ee739a9671b26f961b1743a68ed": {
+      "workers": {
+        "app/(app)/alerts/page": {
+          "moduleId": 37242,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(app)/dashboard/page": {
+          "moduleId": 73737,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(app)/ia/page": {
+          "moduleId": 78468,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(app)/inventory/page": {
+          "moduleId": 15345,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(app)/items/page": {
+          "moduleId": 29233,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(app)/linen/page": {
+          "moduleId": 36764,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(app)/minibar/page": {
+          "moduleId": 42260,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "src/lib/actions/auth.ts",
+      "exportedName": "logout"
+    },
+    "4064e6830acf486d00827af5fc0c31f57145e4a2a3": {
+      "workers": {
+        "app/(app)/alerts/page": {
+          "moduleId": 37242,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "src/lib/actions/inventory.ts",
+      "exportedName": "resolveAlert"
+    },
+    "40dab9327c514cac606e3fb59fae956dfae95670d3": {
+      "workers": {
+        "app/(app)/alerts/page": {
+          "moduleId": 37242,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "src/lib/actions/inventory.ts",
+      "exportedName": "toggleItemActive"
+    },
+    "602173b8a6620626b0a6c84201ab4ad9d22a0bb4dd": {
+      "workers": {
+        "app/(app)/alerts/page": {
+          "moduleId": 37242,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(app)/linen/page": {
+          "moduleId": 36764,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "src/lib/actions/inventory.ts",
+      "exportedName": "registerLinenMerma"
+    },
+    "6095b80f81a4fe9ca1bf79ea84e237114e14be0a95": {
+      "workers": {
+        "app/(app)/alerts/page": {
+          "moduleId": 37242,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(app)/minibar/page": {
+          "moduleId": 42260,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "src/lib/actions/inventory.ts",
+      "exportedName": "markMinibarPaid"
+    },
+    "60a7b6f5f34dd7203792ce3bc6fc5d2a6a56b61269": {
+      "workers": {
+        "app/(app)/alerts/page": {
+          "moduleId": 37242,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(app)/items/page": {
+          "moduleId": 29233,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "src/lib/actions/inventory.ts",
+      "exportedName": "createItem"
+    },
+    "60ab639999a84a1f84dbb89a82a4bfbc041bd7a99d": {
+      "workers": {
+        "app/(app)/alerts/page": {
+          "moduleId": 37242,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(app)/minibar/page": {
+          "moduleId": 42260,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "src/lib/actions/inventory.ts",
+      "exportedName": "registerMinibarConsumo"
+    },
+    "60d12355e9f81740dc4c3e03cc5ff090b585862435": {
+      "workers": {
+        "app/(app)/alerts/page": {
+          "moduleId": 37242,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(app)/inventory/page": {
+          "moduleId": 15345,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(app)/items/page": {
+          "moduleId": 29233,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "src/lib/actions/inventory.ts",
+      "exportedName": "registerMovement"
+    },
+    "600c9a64be1df993f7565b58f3c451b25b96d64e3d": {
+      "workers": {
+        "app/(app)/ia/page": {
+          "moduleId": 78468,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "src/lib/actions/ai.ts",
+      "exportedName": "runAiAnalysis"
+    },
+    "60f63c3fe154c9819ca7780291f86d0d2de5748ca0": {
+      "workers": {
+        "app/(app)/ia/page": {
+          "moduleId": 78468,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "src/lib/actions/automation.ts",
+      "exportedName": "dispatchAutomation"
+    },
+    "60065d5dbe93008fc5da2e74579298b90de7c6e437": {
+      "workers": {
+        "app/login/page": {
+          "moduleId": 6020,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "src/lib/actions/auth.ts",
+      "exportedName": "login"
+    }
+  },
+  "edge": {},
+  "encryptionKey": "Zaa7l+HMFAg7Roovf5O4vmQJloQpcsZhiyTpL0qGIjA="
+}

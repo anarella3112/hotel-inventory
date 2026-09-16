@@ -1,0 +1,16 @@
+{
+  "node": {
+    "60065d5dbe93008fc5da2e74579298b90de7c6e437": {
+      "workers": {
+        "app/login/page": {
+          "moduleId": 6020,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "login",
+      "filename": "src/lib/actions/auth.ts"
+    }
+  },
+  "edge": {}
+}

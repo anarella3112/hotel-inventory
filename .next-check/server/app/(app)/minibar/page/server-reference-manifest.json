@@ -1,0 +1,38 @@
+{
+  "node": {
+    "00999e1cc5228a7ee739a9671b26f961b1743a68ed": {
+      "workers": {
+        "app/(app)/minibar/page": {
+          "moduleId": 42260,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "logout",
+      "filename": "src/lib/actions/auth.ts"
+    },
+    "60ab639999a84a1f84dbb89a82a4bfbc041bd7a99d": {
+      "workers": {
+        "app/(app)/minibar/page": {
+          "moduleId": 42260,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "registerMinibarConsumo",
+      "filename": "src/lib/actions/inventory.ts"
+    },
+    "6095b80f81a4fe9ca1bf79ea84e237114e14be0a95": {
+      "workers": {
+        "app/(app)/minibar/page": {
+          "moduleId": 42260,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "markMinibarPaid",
+      "filename": "src/lib/actions/inventory.ts"
+    }
+  },
+  "edge": {}
+}

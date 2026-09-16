@@ -1,0 +1,14 @@
+{
+  "/(app)/alerts/page": "app/(app)/alerts/page.js",
+  "/(app)/dashboard/page": "app/(app)/dashboard/page.js",
+  "/(app)/ia/page": "app/(app)/ia/page.js",
+  "/(app)/inventory/page": "app/(app)/inventory/page.js",
+  "/(app)/items/page": "app/(app)/items/page.js",
+  "/(app)/linen/page": "app/(app)/linen/page.js",
+  "/(app)/minibar/page": "app/(app)/minibar/page.js",
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/login/page": "app/login/page.js",
+  "/page": "app/page.js"
+}

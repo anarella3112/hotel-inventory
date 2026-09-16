@@ -1,0 +1,14 @@
+{
+  "/(app)/alerts/page": "/alerts",
+  "/(app)/dashboard/page": "/dashboard",
+  "/(app)/ia/page": "/ia",
+  "/(app)/inventory/page": "/inventory",
+  "/(app)/items/page": "/items",
+  "/(app)/linen/page": "/linen",
+  "/(app)/minibar/page": "/minibar",
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/favicon.ico/route": "/favicon.ico",
+  "/login/page": "/login",
+  "/page": "/"
+}
