@@ -5,10 +5,10 @@ import { ItemsCatalog } from "@/components/items-catalog";
 export default async function ItemsPage() {
   const supabase = await createClient();
 
-  const [{ data: items }, { data: locations }] = await Promise.all([
-    supabase.from("items").select("*").order("name"),
-    supabase.from("locations").select("id, name").eq("active", true).order("name"),
-  ]);
+  const { data: items } = await supabase
+    .from("items")
+    .select("*")
+    .order("name");
   const providers = Array.from(
     new Set((items ?? []).map((item) => item.provider).filter(Boolean)),
   ).sort();
@@ -23,7 +23,7 @@ export default async function ItemsPage() {
         <h2 className="mb-2 text-sm font-semibold text-zinc-500">
           Registrar nuevo insumo
         </h2>
-        <NewItemForm providers={providers as string[]} locations={locations ?? []} />
+        <NewItemForm providers={providers as string[]} />
       </section>
 
       <ItemsCatalog items={items ?? []} />
