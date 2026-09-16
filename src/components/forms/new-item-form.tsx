@@ -4,16 +4,19 @@ import { useActionState, useState } from "react";
 import { createItem, type ActionState } from "@/lib/actions/inventory";
 import { FormResult } from "@/components/form-result";
 import { CATEGORY_LABELS, SUBCATEGORY_LABELS, UNIT_OPTIONS, type InsumoCategoria } from "@/lib/types";
+import type { Location } from "@/lib/types";
 
 const initialState: ActionState = {};
 
 const CATEGORIES = Object.keys(CATEGORY_LABELS) as InsumoCategoria[];
 
-export function NewItemForm({ providers }: { providers: string[] }) {
+export function NewItemForm({ providers, locations }: { providers: string[]; locations: Pick<Location, "id" | "name">[] }) {
   const [state, formAction, pending] = useActionState(createItem, initialState);
   const [category, setCategory] = useState<InsumoCategoria>("minibar");
   const [provider, setProvider] = useState("");
   const [unit, setUnit] = useState(UNIT_OPTIONS.minibar[0]);
+  const [initialStock, setInitialStock] = useState(0);
+  const [replenishment, setReplenishment] = useState(0);
 
   return (
     <form
@@ -97,6 +100,13 @@ export function NewItemForm({ providers }: { providers: string[] }) {
         </select>
       </div>
       <div>
+        <label className="mb-1 block text-xs font-medium text-zinc-600">Ubicación inicial *</label>
+        <select name="location_id" required defaultValue="" className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200">
+          <option value="">— Seleccionar —</option>
+          {locations.map((location) => <option key={location.id} value={location.id}>{location.name}</option>)}
+        </select>
+      </div>
+      <div>
         <label className="mb-1 block text-xs font-medium text-zinc-600">
           Costo unitario (Bs/USD)
         </label>
@@ -149,17 +159,34 @@ export function NewItemForm({ providers }: { providers: string[] }) {
       </div>
       <div>
         <label className="mb-1 block text-xs font-medium text-zinc-600">
-          Stock máximo *
+          Cantidad actual *
         </label>
         <input
-          name="stock_max"
+          name="initial_stock"
           type="number"
           min="0"
           required
-          defaultValue={0}
+          value={initialStock}
+          onChange={(event) => setInitialStock(Number(event.target.value))}
           className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
         />
-        <p className="mt-1 text-[11px] text-zinc-400">Cantidad objetivo después de reponer.</p>
+        <p className="mt-1 text-[11px] text-zinc-400">Existencia disponible al registrar el artículo.</p>
+      </div>
+      <div>
+        <label className="mb-1 block text-xs font-medium text-zinc-600">Cantidad a agregar *</label>
+        <input
+          name="replenishment_quantity"
+          type="number"
+          min="0"
+          required
+          value={replenishment}
+          onChange={(event) => setReplenishment(Number(event.target.value))}
+          className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
+        />
+        <p className="mt-1 text-[11px] text-zinc-400">Cantidad que se agregará como reposición.</p>
+      </div>
+      <div className="flex items-center rounded-lg border border-[#cfe0fb] bg-[#f4f8ff] px-3 py-2 text-xs text-[#0B2D5B]">
+        Stock máximo calculado: <strong className="ml-1">{initialStock + replenishment}</strong>
       </div>
       <div className="flex items-end">
         <button

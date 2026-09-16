@@ -36,16 +36,22 @@ export async function createItem(
   const newProvider = String(formData.get("new_provider") ?? "").trim();
   const provider = (selectedProvider === "__new__" ? newProvider : selectedProvider) || null;
   const stock_min = Number(formData.get("stock_min") ?? 0);
-  const stock_max = Number(formData.get("stock_max") ?? 0);
+  const initial_stock = Number(formData.get("initial_stock") ?? 0);
+  const replenishment_quantity = Number(formData.get("replenishment_quantity") ?? 0);
+  const location_id = String(formData.get("location_id") ?? "");
+  const stock_max = initial_stock + replenishment_quantity;
 
-  if (!name || !sku || !unit || !subcategory) {
-    return { error: "Nombre, SKU y unidad son obligatorios." };
+  if (!name || !sku || !unit || !subcategory || !location_id) {
+    return { error: "Completa el artículo, subcategoría y ubicación inicial." };
+  }
+  if ([cost, stock_min, initial_stock, replenishment_quantity].some((value) => !Number.isFinite(value) || value < 0)) {
+    return { error: "Las cantidades y costos no pueden ser negativos." };
   }
   if (!CATEGORIES.includes(category)) {
     return { error: "Categoría inválida." };
   }
 
-  const { error } = await supabase.from("items").insert({
+  const { data: createdItem, error } = await supabase.from("items").insert({
     name,
     sku,
     category,
@@ -55,13 +61,23 @@ export async function createItem(
     provider,
     stock_min,
     stock_max,
-  });
+  }).select("id").single();
 
   if (error) {
     if (error.code === "23505") {
       return { error: "Ya existe un insumo con ese SKU." };
     }
     return { error: error.message };
+  }
+
+  const { error: stockError } = await supabase.from("stock").insert({
+    item_id: createdItem.id,
+    location_id,
+    quantity: initial_stock,
+  });
+
+  if (stockError) {
+    return { error: stockError.message };
   }
 
   revalidatePath("/items");

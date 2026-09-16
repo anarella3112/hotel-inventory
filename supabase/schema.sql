@@ -288,6 +288,9 @@ create policy "escritura_roles" on public.items for insert to authenticated with
 create policy "actualiza_stock_roles" on public.stock for update to authenticated using (
   exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin','gerencia','almacen'))
 );
+create policy "inserta_stock_roles" on public.stock for insert to authenticated with check (
+  exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin','gerencia','almacen'))
+);
 create policy "escritura_roles" on public.room_dots for insert to authenticated with check (
   exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin','gerencia','almacen'))
 );
