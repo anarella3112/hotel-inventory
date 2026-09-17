@@ -334,8 +334,8 @@ select
     else 'ok'
   end as estado
 from public.items i
-cross join public.locations l
-left join public.stock s on s.item_id = i.id and s.location_id = l.id
+join public.stock s on s.item_id = i.id
+join public.locations l on l.id = s.location_id
 where i.active and l.active;
 
 create or replace view public.v_mermas as
