@@ -60,7 +60,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// ===== 2c. Normalizar la respuesta de Gemini =====\nconst raw = $input.item.json;\nconst prepared = $('2. Preparar llamada IA').first().json;\n\nlet data = raw;\nif (typeof raw === 'string') {\n  try {\n    data = JSON.parse(raw);\n  } catch (e) {\n    data = { error: 'No se pudo interpretar la respuesta: ' + String(raw).slice(0, 200) };\n  }\n}\nif (data && typeof data === 'object' && !data.candidates && data.error) {\n  data = { error: String(data.error).slice(0, 400) };\n}\nif (data && typeof data === 'object') {\n  data.resumen_plano = prepared.resumen_plano || '';\n}\n\nreturn [{ json: data }];"
+        "jsCode": "// ===== 2c. Normalizar la respuesta de Gemini =====\nconst raw = $input.item.json;\nconst prepared = $('2. Preparar llamada IA').first().json;\n\nlet data = raw;\nif (typeof raw === 'string') {\n  try {\n    data = JSON.parse(raw);\n  } catch (e) {\n    data = { error: 'No se pudo interpretar la respuesta: ' + String(raw).slice(0, 200) };\n  }\n}\nif (data && typeof data === 'object' && !data.candidates && data.error) {\n  data = { error: String(data.error).slice(0, 400) };\n}\nif (data && typeof data === 'object') {\n  data.resumen_plano = prepared.resumen_plano || '';\n  const analysis = data.candidates?.[0]?.content?.parts?.[0]?.text || '';\n  const escapeHtml = (value) => String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n  data.analysis_html = escapeHtml(analysis)\n    .replace(/^### (.*)$/gm, '<h3>$1</h3>')\n    .replace(/^## (.*)$/gm, '<h2>$1</h2>')\n    .replace(/^---$/gm, '<hr>')\n    .replace(/^[-*] (.*)$/gm, '<li>$1</li>')\n    .replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>')\n    .replace(/\\n\\n/g, '<br><br>')\n    .replace(/\\n/g, '<br>');\n}\n\nreturn [{ json: data }];"
       },
       "id": "code-parse-gemini",
       "name": "2c. Analizar respuesta IA",
@@ -95,7 +95,7 @@
         "toEmail": "anarellamendez@gmail.com",
         "subject": "={{ 'Alerta hotelera - Reporte diario ' + new Date().toLocaleDateString('es-VE') }}",
         "emailFormat": "html",
-        "html": "={{ '<h2>Reporte de operación del hotel</h2><pre style=\"font-family:monospace;font-size:13px;white-space:pre-wrap\">' + ($json.resumen_plano || '') + '</pre><h3>Análisis de IA (Gemini)</h3><p>' + ($json.candidates && $json.candidates[0] && $json.candidates[0].content && $json.candidates[0].content.parts && $json.candidates[0].content.parts[0] ? $json.candidates[0].content.parts[0].text : '') + '</p>' }}",
+        "html": "={{ '<div style=\"font-family:Arial,sans-serif;color:#1f2937;max-width:760px\"><h2 style=\"color:#0B2D5B\">Reporte de operación del hotel</h2><h3 style=\"color:#D4AF37\">Resumen operativo</h3><pre style=\"font-family:Arial,sans-serif;font-size:14px;line-height:1.6;white-space:pre-wrap;background:#f8fafc;padding:16px;border-radius:8px\">' + ($json.resumen_plano || '') + '</pre><h3 style=\"color:#0B2D5B\">Análisis de IA (Gemini)</h3><div style=\"font-size:14px;line-height:1.6\">' + ($json.analysis_html || '') + '</div></div>' }}",
         "options": {}
       },
       "id": "email-ok",
