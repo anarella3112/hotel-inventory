@@ -70,7 +70,8 @@ export function AiAnalyzer() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-zinc-100 bg-zinc-50 text-left text-xs uppercase tracking-wide text-zinc-500">
-                      <th className="px-3 py-2 font-semibold">SKU</th>
+                       <th className="px-3 py-2 font-semibold">Insumo</th>
+                       <th className="px-3 py-2 font-semibold">SKU</th>
                       <th className="px-3 py-2 font-semibold">
                         Reposición sugerida
                       </th>
@@ -80,7 +81,8 @@ export function AiAnalyzer() {
                   <tbody>
                     {state.reposiciones.map((r, i) => (
                       <tr key={i} className="border-b border-zinc-50">
-                        <td className="px-3 py-2 font-mono text-xs">{r.sku}</td>
+                         <td className="px-3 py-2 font-medium text-zinc-800">{r.name}</td>
+                         <td className="px-3 py-2 font-mono text-xs">{r.sku}</td>
                         <td className="px-3 py-2 font-semibold text-emerald-700">
                           {r.cantidad_sugerida}
                         </td>

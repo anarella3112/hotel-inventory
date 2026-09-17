@@ -6,6 +6,7 @@ import { geminiComplete } from "@/lib/gemini";
 
 export interface ReposicionSugerida {
   sku: string;
+  name: string;
   cantidad_sugerida: number;
   justificacion: string;
 }
@@ -113,7 +114,12 @@ export async function runAiAnalysis(
   const almacen = (locations ?? []).find((l) => l.name === "Almacén Central");
   const predictedDate = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
 
-  for (const r of parsed.reposiciones ?? []) {
+  const reposiciones = (parsed.reposiciones ?? []).map((r) => ({
+    ...r,
+    name: (items ?? []).find((item) => item.sku === r.sku)?.name ?? r.sku,
+  }));
+
+  for (const r of reposiciones) {
     const item = (items ?? []).find((i) => i.sku === r.sku);
     if (item && almacen) {
       await supabase.from("ai_predictions").insert({
@@ -132,7 +138,7 @@ export async function runAiAnalysis(
   return {
     analysis: parsed.resumen ?? text,
     riesgos: parsed.riesgos,
-    reposiciones: parsed.reposiciones,
+    reposiciones,
     usage: {
       promptTokens: usage.promptTokens,
       completionTokens: usage.completionTokens,
