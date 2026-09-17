@@ -60,7 +60,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// ===== 2c. Normalizar la respuesta de Gemini =====\nconst raw = $input.item.json;\n\nlet data = raw;\nif (typeof raw === 'string') {\n  try {\n    data = JSON.parse(raw);\n  } catch (e) {\n    data = { error: 'No se pudo interpretar la respuesta: ' + String(raw).slice(0, 200) };\n  }\n}\nif (data && typeof data === 'object' && !data.candidates && data.error) {\n  data = { error: String(data.error).slice(0, 400) };\n}\nif (data && typeof data === 'object') {\n  data.resumen_plano = $input.item.json.resumen_plano || '';\n}\n\nreturn [{ json: data }];"
+        "jsCode": "// ===== 2c. Normalizar la respuesta de Gemini =====\nconst raw = $input.item.json;\nconst prepared = $('2. Preparar llamada IA').first().json;\n\nlet data = raw;\nif (typeof raw === 'string') {\n  try {\n    data = JSON.parse(raw);\n  } catch (e) {\n    data = { error: 'No se pudo interpretar la respuesta: ' + String(raw).slice(0, 200) };\n  }\n}\nif (data && typeof data === 'object' && !data.candidates && data.error) {\n  data = { error: String(data.error).slice(0, 400) };\n}\nif (data && typeof data === 'object') {\n  data.resumen_plano = prepared.resumen_plano || '';\n}\n\nreturn [{ json: data }];"
       },
       "id": "code-parse-gemini",
       "name": "2c. Analizar respuesta IA",
