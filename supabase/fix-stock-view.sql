@@ -6,7 +6,6 @@ select
   i.name,
   i.sku,
   i.category,
-  i.subcategory,
   i.unit,
   i.cost,
   l.id as location_id,
