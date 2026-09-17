@@ -5,6 +5,32 @@ import { runAiAnalysis, type AiState } from "@/lib/actions/ai";
 
 const initialState: AiState = {};
 
+function renderInline(text: string) {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, index) =>
+    part.startsWith("**") && part.endsWith("**") ? (
+      <strong key={index}>{part.slice(2, -2)}</strong>
+    ) : (
+      <span key={index}>{part}</span>
+    ),
+  );
+}
+
+function FormattedAnalysis({ text }: { text: string }) {
+  return (
+    <div className="space-y-2 text-sm leading-6 text-violet-950">
+      {text.split(/\r?\n/).map((line, index) => {
+        const trimmed = line.trim();
+        if (!trimmed) return <div key={index} className="h-1" />;
+        if (/^-{3,}$/.test(trimmed)) return <hr key={index} className="my-3 border-violet-200" />;
+        if (trimmed.startsWith("### ")) return <h4 key={index} className="pt-2 text-base font-bold text-[#0B2D5B]">{renderInline(trimmed.slice(4))}</h4>;
+        if (trimmed.startsWith("## ")) return <h3 key={index} className="pt-2 text-lg font-bold text-[#0B2D5B]">{renderInline(trimmed.slice(3))}</h3>;
+        if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) return <div key={index} className="flex gap-2 pl-2"><span className="text-[#D4AF37]">•</span><span>{renderInline(trimmed.slice(2))}</span></div>;
+        return <p key={index}>{renderInline(trimmed)}</p>;
+      })}
+    </div>
+  );
+}
+
 export function AiAnalyzer() {
   const [state, formAction, pending] = useActionState(
     runAiAnalysis,
@@ -44,7 +70,7 @@ export function AiAnalyzer() {
         {state.analysis && (
           <>
             <div className="rounded-lg border border-violet-100 bg-violet-50 p-4">
-              <p className="text-sm text-violet-900">{state.analysis}</p>
+              <FormattedAnalysis text={state.analysis} />
             </div>
 
             {state.riesgos && state.riesgos.length > 0 && (
