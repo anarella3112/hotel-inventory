@@ -28,7 +28,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// ===== 2. Preparar la llamada a Gemini =====\n// Construye el prompt y serializa el body de la API (sin depender de fetch).\n\nconst prompt = 'Eres un analista hotelero. Resume el siguiente reporte de inventario y destaca los 3 riesgos más urgentes de fuga o desperdicio. Sé concreto:\\n\\n' + ($input.item.json.resumen_plano || '');\n\nconst body = JSON.stringify({\n  contents: [{ parts: [{ text: prompt }] }],\n  generationConfig: { temperature: 0.2 },\n});\n\nreturn [{ json: { prompt, body } }];"
+        "jsCode": "// ===== 2. Preparar la llamada a Gemini =====\n// Construye el prompt y serializa el body de la API (sin depender de fetch).\n\nconst resumen_plano = $input.item.json.resumen_plano || '';\nconst prompt = 'Eres un analista hotelero. Resume el siguiente reporte de inventario y destaca los 3 riesgos más urgentes de fuga o desperdicio. Sé concreto:\\n\\n' + resumen_plano;\n\nconst body = JSON.stringify({\n  contents: [{ parts: [{ text: prompt }] }],\n  generationConfig: { temperature: 0.2 },\n});\n\nreturn [{ json: { prompt, body, resumen_plano } }];"
       },
       "id": "code-prep-gemini",
       "name": "2. Preparar llamada IA",

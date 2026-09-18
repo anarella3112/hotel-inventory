@@ -105,7 +105,11 @@ export async function runAiAnalysis(
   } = {};
 
   try {
-    parsed = JSON.parse(text);
+    const cleanText = text
+      .replace(/^```(?:json)?\s*/i, "")
+      .replace(/\s*```$/i, "")
+      .trim();
+    parsed = JSON.parse(cleanText);
   } catch {
     parsed = { resumen: text };
   }
