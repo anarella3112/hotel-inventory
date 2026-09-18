@@ -56,6 +56,9 @@
       "name": "2b. HTTP: Llamar a Gemini",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
+      "retryOnFail": true,
+      "maxAttempts": 3,
+      "waitBetweenAttempts": 5000,
       "position": [840, 0]
     },
     {
