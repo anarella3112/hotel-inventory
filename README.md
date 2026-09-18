@@ -1,6 +1,6 @@
-# Hotel Inventory — Proyecto #14 (UNEG)
+# Hotel Inventory
 
-Aplicación web para el **control del inventario de insumos en el sector hotelero y de hospedaje** (lencería, minibar, artículos de limpieza y demás insumos de operación). Proyecto académico de **Ingeniería de Software I** — UNEG (Prof. Ing. Dubraska Roca).
+Aplicación web para el **control del inventario de insumos en el sector hotelero y de hospedaje** (lencería, minibar, artículos de limpieza y demás insumos de operación). 
 
 > **Problemática resuelta:** fugas y desperdicio en la reposición de insumos. La aplicación digitaliza el inventario, genera alertas de stock, detecta patrones de fuga con IA y automatiza reportes por correo.
 
@@ -30,7 +30,6 @@ flowchart LR
   N8N --> Email["Email / Reporte"]
 ```
 
-Ver el diagrama E-R y de casos de uso en el [informe técnico](../informe_tecnico.md) y en `supabase/schema.sql`.
 
 ## Estructura del proyecto
 
