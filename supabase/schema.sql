@@ -178,6 +178,15 @@ create table public.profiles (
   created_at timestamptz not null default now()
 );
 
+create or replace function public.is_admin()
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+  select exists (select 1 from public.profiles where id = auth.uid() and role = 'admin');
+$$;
+
 -- ============================================================
 -- AUTOMATIZACIÓN DE STOCK: función que aplica un movimiento
 -- ============================================================
@@ -318,6 +327,8 @@ create policy "resolver_alertas_roles" on public.alerts for update to authentica
   exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin','gerencia','almacen'))
 );
 create policy "lectura_roles_propio" on public.profiles for select to authenticated using (id = auth.uid());
+create policy "lectura_perfiles_admin" on public.profiles for select to authenticated using (public.is_admin());
+create policy "actualiza_perfiles_admin" on public.profiles for update to authenticated using (public.is_admin()) with check (public.is_admin());
 
 -- ============================================================
 -- VISTAS ÚTILES

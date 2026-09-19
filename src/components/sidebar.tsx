@@ -15,6 +15,7 @@ const NAV: { href: string; label: string; icon: string; roles: AppRole[] }[] = [
   { href: "/linen", label: "Lencería", icon: "▤", roles: ["admin", "gerencia", "gobernanta", "piso"] },
   { href: "/alerts", label: "Alertas", icon: "!", roles: ["admin", "gerencia", "gobernanta", "almacen"] },
   { href: "/ia", label: "IA y Reportes", icon: "✦", roles: ["admin", "gerencia", "gobernanta", "almacen"] },
+  { href: "/admin/users", label: "Usuarios", icon: "♙", roles: ["admin"] },
 ];
 
 export function Sidebar({

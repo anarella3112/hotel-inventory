@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { supabasePublishableKey, supabaseUrl } from "@/lib/supabase/config";
 
 const ROLE_PATHS: Record<string, string[]> = {
-  admin: ["/dashboard", "/items", "/inventory", "/minibar", "/linen", "/alerts", "/ia"],
+  admin: ["/dashboard", "/items", "/inventory", "/minibar", "/linen", "/alerts", "/ia", "/admin/users"],
   gerencia: ["/dashboard", "/items", "/inventory", "/minibar", "/linen", "/alerts", "/ia"],
   gobernanta: ["/dashboard", "/inventory", "/minibar", "/linen", "/alerts", "/ia"],
   piso: ["/dashboard", "/inventory", "/minibar", "/linen"],
