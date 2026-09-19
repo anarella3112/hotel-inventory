@@ -62,7 +62,7 @@ export function Sidebar({
           </div>
           <div className="min-w-0">
             <p className="truncate text-sm font-medium text-zinc-800">
-              {fullName ?? userEmail}
+              {role ? ROLE_LABELS[role] : fullName ?? userEmail}
             </p>
             {role && (
               <span
