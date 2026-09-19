@@ -2,6 +2,15 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { supabasePublishableKey, supabaseUrl } from "@/lib/supabase/config";
 
+const ROLE_PATHS: Record<string, string[]> = {
+  admin: ["/dashboard", "/items", "/inventory", "/minibar", "/linen", "/alerts", "/ia"],
+  gerencia: ["/dashboard", "/items", "/inventory", "/minibar", "/linen", "/alerts", "/ia"],
+  gobernanta: ["/dashboard", "/inventory", "/minibar", "/linen", "/alerts", "/ia"],
+  piso: ["/dashboard", "/inventory", "/minibar", "/linen"],
+  almacen: ["/dashboard", "/items", "/inventory", "/alerts", "/ia"],
+  frontdesk: ["/dashboard", "/minibar"],
+};
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -42,6 +51,23 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);
+  }
+
+  if (user && !request.nextUrl.pathname.startsWith("/api")) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+    const role = profile?.role ?? "piso";
+    const allowedPaths = ROLE_PATHS[role] ?? ROLE_PATHS.piso;
+    const canAccess = allowedPaths.some((path) => request.nextUrl.pathname.startsWith(path));
+
+    if (!canAccess) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
+    }
   }
 
   return supabaseResponse;
