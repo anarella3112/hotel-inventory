@@ -20,6 +20,18 @@ export async function dispatchAutomation(
   formData: FormData,
 ): Promise<AutomationState> {
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user?.id ?? "")
+    .maybeSingle();
+
+  if (profile?.role !== "admin" && profile?.role !== "gerencia") {
+    return { sent: false, error: "Solo Gerencia y Administración pueden enviar el reporte." };
+  }
 
   const [{ data: stock }, { data: mermas }, { data: consumos }] =
     await Promise.all([

@@ -8,7 +8,7 @@ import {
 
 const initialState: AutomationState = {};
 
-export function AutoReportSender() {
+export function AutoReportSender({ canDispatch }: { canDispatch: boolean }) {
   const [state, formAction, pending] = useActionState(
     dispatchAutomation,
     initialState,
@@ -27,13 +27,19 @@ export function AutoReportSender() {
               email/PDF.
             </p>
           </div>
-          <button
-            type="submit"
-            disabled={pending}
-            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-50"
-          >
-            {pending ? "Enviando a n8n…" : "↗ Disparar automatización"}
-          </button>
+          {canDispatch ? (
+            <button
+              type="submit"
+              disabled={pending}
+              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-50"
+            >
+              {pending ? "Enviando a n8n…" : "↗ Disparar automatización"}
+            </button>
+          ) : (
+            <span className="rounded-lg bg-zinc-100 px-4 py-2 text-sm font-medium text-zinc-500">
+              Solo Gerencia y Administración
+            </span>
+          )}
         </div>
       </form>
 

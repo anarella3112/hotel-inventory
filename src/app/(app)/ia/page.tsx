@@ -5,8 +5,9 @@ import { AutoReportSender } from "@/components/auto-report-sender";
 export default async function IaPage() {
   const supabase = await createClient();
 
-  const [{ data: usageLog }, { data: predictions }, { data: items }] =
+  const [{ data: userData }, { data: usageLog }, { data: predictions }, { data: items }] =
     await Promise.all([
+      supabase.auth.getUser(),
       supabase
         .from("ai_usage_log")
         .select("*")
@@ -21,6 +22,12 @@ export default async function IaPage() {
     ]);
 
   const itemMap = new Map((items ?? []).map((i) => [i.id, i]));
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", userData.user?.id ?? "")
+    .maybeSingle();
+  const canDispatch = profile?.role === "admin" || profile?.role === "gerencia";
 
   const predRows = (predictions ?? []).map((p) => ({
     ...p,
@@ -49,7 +56,7 @@ export default async function IaPage() {
 
       <AiAnalyzer />
 
-      <AutoReportSender />
+      <AutoReportSender canDispatch={canDispatch} />
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
