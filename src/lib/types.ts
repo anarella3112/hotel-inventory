@@ -135,7 +135,7 @@ export const TYPE_LABELS: Record<MovimientoTipo, string> = {
 };
 
 export const ROLE_LABELS: Record<AppRole, string> = {
-  admin: "Administrador",
+  admin: "Administradora",
   gerencia: "Gerencia",
   gobernanta: "Gobernanta",
   piso: "Personal de piso",
