@@ -4,7 +4,7 @@ import { ROLE_LABELS, type AppRole } from "@/lib/types";
 const ROLE_ACCESS: Record<AppRole, string> = {
   admin: "Todos los módulos y configuración",
   gerencia: "Dashboard, insumos, inventario, minibar, lencería, alertas e IA",
-  gobernanta: "Dashboard, inventario, minibar, lencería, alertas e IA",
+  gobernanta: "Dashboard, inventario, lencería, alertas e IA",
   piso: "Dashboard, inventario, minibar y lencería",
   almacen: "Dashboard, insumos, inventario, alertas e IA",
   frontdesk: "Dashboard y minibar",

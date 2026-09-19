@@ -311,7 +311,7 @@ create policy "escritura_movimientos" on public.movements for insert to authenti
   exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin','gerencia','almacen','gobernanta','piso'))
 );
 create policy "escritura_consumos" on public.minibar_consumos for insert to authenticated with check (
-  exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin','gerencia','gobernanta','piso','frontdesk'))
+  exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin','gerencia','piso','frontdesk'))
 );
 create policy "actualiza_cobros_minibar" on public.minibar_consumos for update to authenticated using (
   exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin','gerencia','frontdesk'))
