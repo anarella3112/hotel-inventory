@@ -1,4 +1,11 @@
 -- Permite al administrador consultar y actualizar perfiles desde la aplicación.
+alter table public.profiles add column if not exists email text;
+
+update public.profiles p
+set email = u.email
+from auth.users u
+where u.id = p.id and (p.email is null or p.email <> u.email);
+
 create or replace function public.is_admin()
 returns boolean
 language sql

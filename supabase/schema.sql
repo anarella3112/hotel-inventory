@@ -173,6 +173,7 @@ create table public.ai_usage_log (
 create table public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   full_name text,
+  email text,
   role app_role not null default 'piso',
   active boolean not null default true,
   created_at timestamptz not null default now()
