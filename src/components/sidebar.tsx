@@ -7,14 +7,14 @@ import type { AppRole } from "@/lib/types";
 import { ROLE_LABELS, ROLE_COLORS } from "@/lib/types";
 import { BrandLogo } from "@/components/brand-logo";
 
-const NAV = [
-  { href: "/dashboard", label: "Panel", icon: "▦" },
-  { href: "/items", label: "Insumos", icon: "◫" },
-  { href: "/inventory", label: "Inventario", icon: "≡" },
-  { href: "/minibar", label: "Minibar", icon: "◍" },
-  { href: "/linen", label: "Lencería", icon: "▤" },
-  { href: "/alerts", label: "Alertas", icon: "!" },
-  { href: "/ia", label: "IA y Reportes", icon: "✦" },
+const NAV: { href: string; label: string; icon: string; roles: AppRole[] }[] = [
+  { href: "/dashboard", label: "Panel", icon: "▦", roles: ["admin", "gerencia", "gobernanta", "piso", "almacen", "frontdesk"] },
+  { href: "/items", label: "Insumos", icon: "◫", roles: ["admin", "gerencia", "almacen"] },
+  { href: "/inventory", label: "Inventario", icon: "≡", roles: ["admin", "gerencia", "gobernanta", "piso", "almacen"] },
+  { href: "/minibar", label: "Minibar", icon: "◍", roles: ["admin", "gerencia", "piso", "frontdesk"] },
+  { href: "/linen", label: "Lencería", icon: "▤", roles: ["admin", "gerencia", "gobernanta", "piso"] },
+  { href: "/alerts", label: "Alertas", icon: "!", roles: ["admin", "gerencia", "gobernanta", "almacen"] },
+  { href: "/ia", label: "IA y Reportes", icon: "✦", roles: ["admin", "gerencia", "gobernanta", "almacen"] },
 ];
 
 export function Sidebar({
@@ -36,7 +36,7 @@ export function Sidebar({
       </div>
 
       <nav className="flex-1 space-y-1 px-3">
-        {NAV.map((item) => {
+        {NAV.filter((item) => role && item.roles.includes(role)).map((item) => {
           const active = pathname.startsWith(item.href);
           return (
             <Link
