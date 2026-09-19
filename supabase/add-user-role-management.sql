@@ -6,6 +6,8 @@ set email = u.email
 from auth.users u
 where u.id = p.id and (p.email is null or p.email <> u.email);
 
+update public.profiles set active = true;
+
 create or replace function public.is_admin()
 returns boolean
 language sql
