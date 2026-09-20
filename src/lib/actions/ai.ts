@@ -96,7 +96,21 @@ export async function runAiAnalysis(
     "Si no hay riesgos, devuelve arrays vacíos.",
   ].join("\n");
 
-  const { text, model, usage } = await geminiComplete("analisis_inventario", prompt);
+  let text: string;
+  let model: string;
+  let usage: Awaited<ReturnType<typeof geminiComplete>>["usage"];
+
+  try {
+    const result = await geminiComplete("analisis_inventario", prompt);
+    text = result.text;
+    model = result.model;
+    usage = result.usage;
+  } catch (error) {
+    console.error("Gemini analysis failed", error);
+    return {
+      error: `No se pudo ejecutar el análisis de Gemini: ${error instanceof Error ? error.message : "error desconocido"}`,
+    };
+  }
 
   let parsed: {
     resumen?: string;
