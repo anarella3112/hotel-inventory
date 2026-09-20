@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { logout } from "@/lib/actions/auth";
 import type { AppRole } from "@/lib/types";
 import { ROLE_LABELS, ROLE_COLORS } from "@/lib/types";
@@ -28,6 +29,7 @@ export function Sidebar({
   role?: AppRole;
 }) {
   const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const visibleNav = NAV.filter((item) => role && item.roles.includes(role));
 
@@ -89,17 +91,20 @@ export function Sidebar({
         </form>
       </div>
       </aside>
-      <nav className="fixed inset-x-0 bottom-0 z-40 flex overflow-x-auto border-t border-[#e5e7eb] bg-white/95 px-2 py-2 shadow-[0_-4px_16px_rgba(11,45,91,0.08)] backdrop-blur sm:hidden">
-        {visibleNav.map((item) => {
-          const active = pathname.startsWith(item.href);
-          return (
-            <Link key={item.href} href={item.href} className={`flex min-w-[74px] flex-1 flex-col items-center gap-1 rounded-lg px-1 py-1.5 text-[10px] font-medium ${active ? "bg-[#eaf2ff] text-[#0B2D5B]" : "text-zinc-500"}`}>
-              <span className="text-base">{item.icon}</span>
-              <span className="truncate">{item.label}</span>
-            </Link>
-          );
-        })}
-      </nav>
+      <button type="button" onClick={() => setMobileOpen(true)} aria-label="Abrir menú" className="fixed left-3 top-3 z-40 rounded-lg border border-[#e5e7eb] bg-white px-3 py-2 text-xl text-[#0B2D5B] shadow sm:hidden">☰</button>
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 bg-[#0B2D5B]/30 sm:hidden" onClick={() => setMobileOpen(false)}>
+          <nav className="h-full w-72 bg-white p-4 shadow-xl" onClick={(event) => event.stopPropagation()}>
+            <div className="mb-6 flex items-center justify-between">
+              <BrandLogo compact />
+              <button type="button" onClick={() => setMobileOpen(false)} aria-label="Cerrar menú" className="text-2xl text-zinc-500">×</button>
+            </div>
+            <div className="space-y-1">
+              {visibleNav.map((item) => <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)} className={`flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium ${pathname.startsWith(item.href) ? "bg-[#eaf2ff] text-[#0B2D5B]" : "text-zinc-600"}`}><span className="w-5 text-center">{item.icon}</span>{item.label}</Link>)}
+            </div>
+          </nav>
+        </div>
+      )}
     </>
   );
 }
