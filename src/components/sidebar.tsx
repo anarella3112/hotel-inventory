@@ -29,39 +29,43 @@ export function Sidebar({
 }) {
   const pathname = usePathname();
 
+  const visibleNav = NAV.filter((item) => role && item.roles.includes(role));
+
   return (
-    <aside className="flex w-64 flex-col border-r border-[#e5e7eb] bg-white">
-      <div className="border-b border-[#e5e7eb] px-5 py-5">
+    <>
+      <aside className="hidden w-64 shrink-0 flex-col border-r border-[#e5e7eb] bg-white sm:flex">
+      <div className="border-b border-[#e5e7eb] px-2 py-4 sm:px-5 sm:py-5">
         <BrandLogo compact />
-        <p className="mt-2 pl-1 text-[10px] font-medium tracking-[0.12em] text-[#0B2D5B]/55">MÁS CONTROL · MENOS FUGAS</p>
+        <p className="mt-2 hidden pl-1 text-[10px] font-medium tracking-[0.12em] text-[#0B2D5B]/55 sm:block">MÁS CONTROL · MENOS FUGAS</p>
       </div>
 
       <nav className="flex-1 space-y-1 px-3">
-        {NAV.filter((item) => role && item.roles.includes(role)).map((item) => {
+        {visibleNav.map((item) => {
           const active = pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
+              title={item.label}
+              className={`flex items-center justify-center gap-3 rounded-lg px-2 py-2 text-sm font-medium transition sm:justify-start sm:px-3 ${
                 active
                    ? "bg-[#eaf2ff] text-[#0B2D5B] shadow-sm"
                    : "text-zinc-600 hover:bg-[#f5f8fc] hover:text-[#0B2D5B]"
               }`}
             >
               <span className="w-4 text-center">{item.icon}</span>
-              {item.label}
+              <span className="hidden sm:inline">{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
-      <div className="border-t border-[#e5e7eb] p-4">
-        <div className="mb-3 flex items-center gap-3">
+      <div className="border-t border-[#e5e7eb] p-2 sm:p-4">
+        <div className="mb-3 flex items-center justify-center gap-3 sm:justify-start">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-200 text-sm font-semibold text-zinc-600">
             {(fullName ?? userEmail ?? "U").charAt(0).toUpperCase()}
           </div>
-          <div className="min-w-0">
+          <div className="hidden min-w-0 sm:block">
             <p className="truncate text-sm font-medium text-zinc-800">
               {role ? ROLE_LABELS[role] : fullName ?? userEmail}
             </p>
@@ -77,12 +81,25 @@ export function Sidebar({
         <form action={logout}>
           <button
             type="submit"
-            className="w-full rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 transition hover:border-red-200 hover:bg-red-50 hover:text-red-700"
+            className="w-full rounded-lg border border-zinc-200 px-2 py-1.5 text-xs text-zinc-600 transition hover:border-red-200 hover:bg-red-50 hover:text-red-700 sm:px-3 sm:text-sm"
           >
-            Cerrar sesión
+            <span className="hidden sm:inline">Cerrar sesión</span>
+            <span className="sm:hidden" aria-hidden="true">↪</span>
           </button>
         </form>
       </div>
-    </aside>
+      </aside>
+      <nav className="fixed inset-x-0 bottom-0 z-40 flex overflow-x-auto border-t border-[#e5e7eb] bg-white/95 px-2 py-2 shadow-[0_-4px_16px_rgba(11,45,91,0.08)] backdrop-blur sm:hidden">
+        {visibleNav.map((item) => {
+          const active = pathname.startsWith(item.href);
+          return (
+            <Link key={item.href} href={item.href} className={`flex min-w-[74px] flex-1 flex-col items-center gap-1 rounded-lg px-1 py-1.5 text-[10px] font-medium ${active ? "bg-[#eaf2ff] text-[#0B2D5B]" : "text-zinc-500"}`}>
+              <span className="text-base">{item.icon}</span>
+              <span className="truncate">{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+    </>
   );
 }

@@ -14,7 +14,7 @@ export function BrandLogo({ compact = false }: { compact?: boolean }) {
         <path d="m46 29 3 3 6-6M46 37l3 3 6-6" stroke="#0B2D5B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M4 49c13-6 25 8 56-5-9 15-36 18-56 5Z" fill="#D4AF37" />
       </svg>
-      <div className="leading-none">
+      <div className={`${compact ? "hidden sm:block" : ""} leading-none`}>
         <div className={`${compact ? "text-lg" : "text-2xl"} font-extrabold tracking-tight`}>
           <span className="text-[#0B2D5B]">Innova</span><span className="text-[#D4AF37]">Hotel</span>
         </div>
