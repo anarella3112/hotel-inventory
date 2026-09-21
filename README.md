@@ -126,6 +126,3 @@ docker build -t hotel-inventory .
 docker compose up -d app n8n
 ```
 
-## Créditos
-
-Proyecto #14 — Ingeniería de Software I · UNEG · Informe técnico completo en `../informe_tecnico.md`.
